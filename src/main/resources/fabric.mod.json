@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "dsmod",
 	"version": "${version}",
-	"name": "Definately Stupid Mod",
-	"description": "This is a definately stupid mod",
+	"name": "Definitely Stupid Mod",
+	"description": "This is a definitely stupid mod",
 	"authors": [
 		"Badnuker",
 		"NoobEric",
@@ -18,13 +18,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.badnuker.dsmod.DefinatelyStupidMod"
+			"net.badnuker.dsmod.DefinitelyStupidMod"
 		],
 		"fabric-datagen": [
-			"net.badnuker.dsmod.DefinatelyStupidModDataGenerator"
+			"net.badnuker.dsmod.DefinitelyStupidModDataGenerator"
 		],
 		"client": [
-			"net.badnuker.dsmod.DefinatelyStupidModClient"
+			"net.badnuker.dsmod.DefinitelyStupidModClient"
 		]
 	},
 	"mixins": [
