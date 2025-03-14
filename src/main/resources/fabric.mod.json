@@ -18,13 +18,13 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.badnuker.DefinatelyStupidMod"
+			"net.badnuker.dsmod.DefinatelyStupidMod"
 		],
 		"fabric-datagen": [
-			"net.badnuker.DefinatelyStupidModDataGenerator"
+			"net.badnuker.dsmod.DefinatelyStupidModDataGenerator"
 		],
 		"client": [
-			"net.badnuker.DefinatelyStupidModClient"
+			"net.badnuker.dsmod.DefinatelyStupidModClient"
 		]
 	},
 	"mixins": [

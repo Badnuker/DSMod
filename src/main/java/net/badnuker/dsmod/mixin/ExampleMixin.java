@@ -1,4 +1,4 @@
-package net.badnuker.mixin;
+package net.badnuker.dsmod.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

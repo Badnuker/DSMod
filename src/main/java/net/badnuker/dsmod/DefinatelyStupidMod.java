@@ -1,4 +1,4 @@
-package net.badnuker;
+package net.badnuker.dsmod;
 
 import net.fabricmc.api.ModInitializer;
 
