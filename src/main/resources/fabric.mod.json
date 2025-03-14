@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id": "dsmod",
+	"version": "${version}",
+	"name": "Definately Stupid Mod",
+	"description": "This is a definately stupid mod",
+	"authors": [
+		"Badnuker",
+		"NoobEric",
+		"Deepseek"
+	],
+	"contact": {
+		"homepage": "https://github.com/Badnuker/DSMod",
+		"sources": "https://github.com/Badnuker/DSMod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/dsmod/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.badnuker.DefinatelyStupidMod"
+		],
+		"fabric-datagen": [
+			"net.badnuker.DefinatelyStupidModDataGenerator"
+		],
+		"client": [
+			"net.badnuker.DefinatelyStupidModClient"
+		]
+	},
+	"mixins": [
+		"dsmod.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.10",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
