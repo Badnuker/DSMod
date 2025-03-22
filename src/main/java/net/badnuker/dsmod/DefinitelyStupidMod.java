@@ -1,5 +1,6 @@
 package net.badnuker.dsmod;
 
+import net.badnuker.dsmod.entity.ModEntities;
 import net.badnuker.dsmod.item.ModItemGroups;
 import net.badnuker.dsmod.item.ModItems;
 import net.fabricmc.api.ModInitializer;
@@ -22,6 +23,7 @@ public class DefinitelyStupidMod implements ModInitializer {
         // Proceed with mild caution.
         ModItems.registerModItems();
         ModItemGroups.registerModItemsGroups();
+        ModEntities.registerModEntities();
         LOGGER.info("Hello Fabric world!");
     }
 }
