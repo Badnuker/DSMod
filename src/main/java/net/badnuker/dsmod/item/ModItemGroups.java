@@ -14,6 +14,7 @@ public class ModItemGroups {
                     .icon(() -> new ItemStack(ModItems.StellarSymphony))
                     .entries((displayContext, entries) -> {
                         entries.add(ModItems.StellarSymphony);
+                        entries.add(ModItems.Switch);
                     }).build());
 
     public static void registerModItemsGroups() {
