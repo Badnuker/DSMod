@@ -11,10 +11,11 @@ import net.minecraft.util.Identifier;
 public class ModItemGroups {
     public static final ItemGroup DS_GROUP = Registry.register(Registries.ITEM_GROUP, Identifier.of(DefinitelyStupidMod.MOD_ID, "ds_group"),
             ItemGroup.create(null, -1).displayName(Text.translatable("itemGroup.test_group"))
-                    .icon(() -> new ItemStack(ModItems.StellarSymphony))
+                    .icon(() -> new ItemStack(ModItems.STELLAR_SYMPHONY))
                     .entries((displayContext, entries) -> {
-                        entries.add(ModItems.StellarSymphony);
-                        entries.add(ModItems.Switch);
+                        entries.add(ModItems.STELLAR_SYMPHONY);
+                        entries.add(ModItems.SWITCH);
+                        entries.add(ModItems.BRUSH);
                     }).build());
 
     public static void registerModItemsGroups() {
