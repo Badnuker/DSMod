@@ -1,11 +1,18 @@
 package net.badnuker.dsmod.entity;
 
+import net.badnuker.dsmod.DefinitelyStupidMod;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MovementType;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -14,58 +21,80 @@ import java.util.List;
 
 public class CollapsedCore extends Entity {
     private PlayerEntity owner;
+    private LivingEntity target;
     private int coreAge;
-    private boolean targeting;
-
-    public CollapsedCore(World world, PlayerEntity owner) {
-        super(ModEntities.COLLAPSED_CORE, world);
-        this.owner = owner;
-    }
 
     public CollapsedCore(EntityType<?> type, World world) {
         super(type, world);
+        this.setBoundingBox(new Box(-0.25, -0.25, -0.25, 0.25, 0.25, 0.25));
     }
 
     @Override
     public void tick() {
         super.tick();
-        World world = this.getWorld();
-
         if (owner == null) {
+            this.discard();
             return;
         }
 
+        World world = this.getWorld();
         coreAge++;
 
-        Box box = this.getBoundingBox();
-        List<Entity> entities = world.getOtherEntities(this, box,
-                entity -> entity instanceof LivingEntity && entity != owner && !((LivingEntity) entity).isTeammate(owner));
+        if (coreAge % 40 == 1) {
+            String output = String.format("当前实体位置：%.1f,%.1f,%.1f | owner：%s | targeting：%s",
+                    this.getX(), this.getY(), this.getZ(),
+                    owner == null ? "不存在" : owner.getName(),
+                    target == null ? "No" : "Yes"
+            );
+            DefinitelyStupidMod.LOGGER.info(output);
+            if (target != null) {
+                output = String.format("锁定目标 %s | 位置：%.1f,%.1f,%.1f",
+                        target.getType().getUntranslatedName(),
+                        target.getX(),
+                        target.getY(),
+                        target.getZ()
+                );
+                DefinitelyStupidMod.LOGGER.info(output);
+            }
+        }
+
+        List<Entity> entities = world.getOtherEntities(this, new Box(this.getBlockPos()).expand(1),
+                entity -> entity instanceof LivingEntity && entity != owner && !entity.isTeammate(owner));
 
         if (!entities.isEmpty()) {
-            Entity target = entities.get(0);
-            if (target instanceof LivingEntity livingTarget) {
+            Entity t = entities.get(0);
+            if (t instanceof LivingEntity livingTarget) {
                 livingTarget.damage(world.getDamageSources().magic(), 5.0f);
                 this.discard();
-                coreAge = 0;
                 return;
             }
         }
 
         if (coreAge > 20) {
             findTarget();
-        }
-
-        if (!targeting) {
-            if (this.distanceTo(owner) < 1) {
+            if (target != null && target.isAlive()) {
+                moveToLivingEntity(target);
+            } else if (this.distanceTo(owner) < 1) {
                 orbitOwner();
             } else {
-                returnToOwner();
+                moveToLivingEntity(owner);
             }
         }
 
-        if (coreAge > 200) {
+
+        if (coreAge > 400) {
             this.discard();
         }
+    }
+
+    public static TypedActionResult<ItemStack> spawn(World world, PlayerEntity user, Hand hand) {
+        if (!world.isClient()) {
+            CollapsedCore core = new CollapsedCore(ModEntities.COLLAPSED_CORE, world);
+            core.owner = user;
+            core.setPos(user.getX(), user.getY(), user.getZ());
+            world.spawnEntity(core);
+        }
+        return TypedActionResult.success(user.getStackInHand(hand), world.isClient());
     }
 
     private void orbitOwner() {
@@ -74,8 +103,11 @@ public class CollapsedCore extends Entity {
     }
 
     private void findTarget() {
+        if (owner == null) {
+            return;
+        }
         World world = this.getWorld();
-        LivingEntity target = world.getClosestEntity(
+        LivingEntity newTarget = world.getClosestEntity(
                 LivingEntity.class,
                 TargetPredicate.createAttackable().setPredicate(e ->
                         e != owner && !e.isTeammate(owner)
@@ -87,17 +119,32 @@ public class CollapsedCore extends Entity {
                 new Box(owner.getBlockPos()).expand(20)
         );
 
-        if (target != null) {
-            this.setVelocity(target.getPos().subtract(this.getPos()).normalize().multiply(0.5));
-            targeting = true;
+        if (newTarget != null) {
+            target = newTarget;
+            moveToLivingEntity(newTarget);
         } else {
-            targeting = false;
+            target = null;
         }
     }
 
-    private void returnToOwner() {
-        Vec3d direction = owner.getPos().subtract(this.getPos()).normalize();
-        this.setVelocity(direction.multiply(0.3));
+    private void moveToLivingEntity(LivingEntity entity) {
+        Vec3d vec3d = new Vec3d(
+                entity.getX() - this.getX(),
+                entity.getY() + (double) entity.getStandingEyeHeight() / (double) 2.0F - this.getY(),
+                entity.getZ() - this.getZ()
+        ).normalize().multiply(0.3);
+
+        this.setVelocity(vec3d);
+        this.move(MovementType.SELF, this.getVelocity());
+    }
+
+    public int getCoreAge() {
+        return this.coreAge;
+    }
+
+    @Override
+    public Packet<ClientPlayPacketListener> createSpawnPacket() {
+        return super.createSpawnPacket();
     }
 
     @Override

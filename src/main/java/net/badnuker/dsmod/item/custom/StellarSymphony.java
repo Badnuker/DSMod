@@ -9,7 +9,6 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
 public class StellarSymphony extends Item {
-
     public StellarSymphony(Settings settings) {
         super(settings);
     }
@@ -17,8 +16,7 @@ public class StellarSymphony extends Item {
     @Override
     public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
         if (!world.isClient) {
-            CollapsedCore core = new CollapsedCore(world, user);
-            world.spawnEntity(core);
+            return CollapsedCore.spawn(world, user, hand);
         }
         return TypedActionResult.success(user.getStackInHand(hand), world.isClient());
     }
