@@ -26,7 +26,6 @@ public class CollapsedCore extends Entity {
 
     public CollapsedCore(EntityType<?> type, World world) {
         super(type, world);
-        this.setBoundingBox(new Box(-0.25, -0.25, -0.25, 0.25, 0.25, 0.25));
     }
 
     @Override
@@ -107,7 +106,7 @@ public class CollapsedCore extends Entity {
             return;
         }
         World world = this.getWorld();
-        LivingEntity newTarget = world.getClosestEntity(
+        target = world.getClosestEntity(
                 LivingEntity.class,
                 TargetPredicate.createAttackable().setPredicate(e ->
                         e != owner && !e.isTeammate(owner)
@@ -118,13 +117,6 @@ public class CollapsedCore extends Entity {
                 owner.getZ(),
                 new Box(owner.getBlockPos()).expand(20)
         );
-
-        if (newTarget != null) {
-            target = newTarget;
-            moveToLivingEntity(newTarget);
-        } else {
-            target = null;
-        }
     }
 
     private void moveToLivingEntity(LivingEntity entity) {
@@ -136,10 +128,6 @@ public class CollapsedCore extends Entity {
 
         this.setVelocity(vec3d);
         this.move(MovementType.SELF, this.getVelocity());
-    }
-
-    public int getCoreAge() {
-        return this.coreAge;
     }
 
     @Override
